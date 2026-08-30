@@ -20,6 +20,8 @@ const TRANSLATIONS = {
     language: "Til",
     dailyStreak: "Kunlik streak",
     bestStreak: "Eng yaxshi streak",
+    freeze: "Streak freeze",
+    freezes: "dona",
     days: "kun",
     quickActions: "Tezkor amallar",
     undo: "Ortga qaytarish",
@@ -49,6 +51,8 @@ const TRANSLATIONS = {
     language: "Language",
     dailyStreak: "Daily streak",
     bestStreak: "Best streak",
+    freeze: "Streak freeze",
+    freezes: "freezes",
     days: "days",
     quickActions: "Quick actions",
     undo: "Undo",
@@ -78,6 +82,8 @@ const TRANSLATIONS = {
     language: "Язык",
     dailyStreak: "Ежедневный streak",
     bestStreak: "Лучший streak",
+    freeze: "Заморозка streak",
+    freezes: "шт",
     days: "дней",
     quickActions: "Быстрые действия",
     undo: "Назад",
@@ -92,6 +98,7 @@ const TRANSLATIONS = {
 };
 
 const PARTICLE_COUNT = 15;
+const FREEZE_EVERY_COUNT = 1000;
 
 function generateParticles() {
   return Array.from({ length: PARTICLE_COUNT }, (_, i) => {
@@ -250,6 +257,12 @@ export default function Tasbih() {
   const [bestStreak, setBestStreak] = useState(() =>
     Number(localStorage.getItem("tasbih_best_streak") || "1"),
   );
+  const [streakFreezes, setStreakFreezes] = useState(() =>
+    Number(localStorage.getItem("tasbih_streak_freezes") || "0"),
+  );
+  const [freezeCounter, setFreezeCounter] = useState(() =>
+    Number(localStorage.getItem("tasbih_freeze_counter") || "0"),
+  );
   const [countHistory, setCountHistory] = useState([]);
   const [copyStatus, setCopyStatus] = useState("");
   const [vibrationEnabled, setVibrationEnabled] = useState(() => {
@@ -333,6 +346,8 @@ export default function Tasbih() {
     localStorage.setItem("tasbih_soundEnabled", soundEnabled.toString());
     localStorage.setItem("tasbih_daily_streak", dailyStreak.toString());
     localStorage.setItem("tasbih_best_streak", bestStreak.toString());
+    localStorage.setItem("tasbih_streak_freezes", streakFreezes.toString());
+    localStorage.setItem("tasbih_freeze_counter", freezeCounter.toString());
     localStorage.setItem(
       "tasbih_vibration_enabled",
       vibrationEnabled.toString(),
@@ -347,6 +362,8 @@ export default function Tasbih() {
     soundEnabled,
     dailyStreak,
     bestStreak,
+    streakFreezes,
+    freezeCounter,
     vibrationEnabled,
     activityLog,
   ]);
@@ -365,13 +382,23 @@ export default function Tasbih() {
         86400000,
     );
 
-    if (diffDays > 0) {
-      const next = diffDays === 1 ? dailyStreak + 1 : 1;
-      setDailyStreak(next);
-      localStorage.setItem("tasbih_daily_streak", String(next));
+    if (diffDays <= 0) return;
+
+    if (streakFreezes > 0) {
+      setStreakFreezes((prev) => {
+        const next = Math.max(0, prev - 1);
+        localStorage.setItem("tasbih_streak_freezes", String(next));
+        return next;
+      });
       localStorage.setItem("tasbih_last_active_date", today);
+      return;
     }
-  }, [dailyStreak]);
+
+    const next = diffDays === 1 ? dailyStreak + 1 : 1;
+    setDailyStreak(next);
+    localStorage.setItem("tasbih_daily_streak", String(next));
+    localStorage.setItem("tasbih_last_active_date", today);
+  }, [dailyStreak, streakFreezes]);
 
   useEffect(() => {
     if (dailyStreak > bestStreak) {
@@ -397,6 +424,24 @@ export default function Tasbih() {
     setCountHistory((prev) => [...prev.slice(-9), count]);
     const nextCount = count + 1;
     setCount(nextCount);
+
+    setFreezeCounter((prevFreezeCounter) => {
+      const nextFreezeCounter = prevFreezeCounter + 1;
+      const earnedFreezes =
+        Math.floor(nextFreezeCounter / FREEZE_EVERY_COUNT) -
+        Math.floor(prevFreezeCounter / FREEZE_EVERY_COUNT);
+
+      if (earnedFreezes > 0) {
+        setStreakFreezes((prevFreezes) => {
+          const updated = prevFreezes + earnedFreezes;
+          localStorage.setItem("tasbih_streak_freezes", String(updated));
+          return updated;
+        });
+      }
+
+      localStorage.setItem("tasbih_freeze_counter", String(nextFreezeCounter));
+      return nextFreezeCounter;
+    });
 
     if (soundEnabled) playSound();
 
@@ -529,6 +574,17 @@ export default function Tasbih() {
             <span className="mini-badge-icon">🔥</span>
             {dailyStreak}
           </div>
+          <div
+            className="streak-mini-badge"
+            style={{
+              color: glowColor,
+              borderColor: `${glowColor}70`,
+              boxShadow: `0 0 12px ${glowColor}40`,
+            }}
+          >
+            <span className="mini-badge-icon">❄️</span>
+            {streakFreezes}
+          </div>
           <button
             className={`settings-icon ${showSettings ? "open" : ""}`}
             onClick={() => setShowSettings(!showSettings)}
@@ -580,6 +636,21 @@ export default function Tasbih() {
                 <span className="streak-icon">🏆</span>
                 <strong>{bestStreak}</strong>
                 <span className="streak-unit">{t.days}</span>
+              </div>
+            </div>
+
+            <div
+              className="daily-streak-card"
+              style={{
+                borderColor: `${glowColor}60`,
+                boxShadow: `0 0 12px ${glowColor}25`,
+              }}
+            >
+              <div className="daily-streak-label">{t.freeze}</div>
+              <div className="daily-streak-value" style={{ color: glowColor }}>
+                <span className="streak-icon">❄️</span>
+                <strong>{streakFreezes}</strong>
+                <span className="streak-unit">{t.freezes}</span>
               </div>
             </div>
 

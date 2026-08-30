@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b1020" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="./src/assets/ramadan-rosary.png"
+    />
     <title>Tasbih</title>
     <script>
       (() => {
@@ -24,7 +28,10 @@
 
           const themeMeta = document.querySelector('meta[name="theme-color"]');
           if (themeMeta) {
-            themeMeta.setAttribute("content", isDarkMode ? "#050d1b" : "#edf6ff");
+            themeMeta.setAttribute(
+              "content",
+              isDarkMode ? "#050d1b" : "#edf6ff",
+            );
           }
         } catch (error) {
           document.documentElement.style.colorScheme = "dark";
