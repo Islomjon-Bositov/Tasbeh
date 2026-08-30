@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Tasbih from "./components/Tasbih";
-import Loading from "./components/Loading";
 import "./App.css";
 
 function App() {
-  const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     try {
       return localStorage.getItem("tasbih_isDarkMode") !== "false";
@@ -12,13 +10,6 @@ function App() {
       return true;
     }
   });
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
 
   useEffect(() => {
     const syncTheme = () => {
@@ -34,8 +25,11 @@ function App() {
   }, []);
 
   return (
-    <main className={`app ${isDarkMode ? "theme-dark" : "theme-light"}`}>
-      {loading ? <Loading isDarkMode={isDarkMode} /> : <Tasbih />}
+    <main
+      className={`app ${isDarkMode ? "theme-dark" : "theme-light"}`}
+      aria-label="Tasbih counter app"
+    >
+      <Tasbih />
     </main>
   );
 }

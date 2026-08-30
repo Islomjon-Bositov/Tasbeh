@@ -586,11 +586,13 @@ export default function Tasbih() {
             {streakFreezes}
           </div>
           <button
+            type="button"
             className={`settings-icon ${showSettings ? "open" : ""}`}
             onClick={() => setShowSettings(!showSettings)}
             style={{ color: glowColor }}
             aria-label={t.settings}
             aria-expanded={showSettings}
+            aria-controls="tasbih-settings-dropdown"
           >
             <span />
             <span />
@@ -599,6 +601,7 @@ export default function Tasbih() {
         </div>
         {showSettings && (
           <div
+            id="tasbih-settings-dropdown"
             className="settings-dropdown"
             style={{
               borderColor: glowColor,
@@ -714,9 +717,11 @@ export default function Tasbih() {
               </div>
               <div className="action-buttons">
                 <button
+                  type="button"
                   className="action-btn"
                   onClick={handleUndo}
                   disabled={!countHistory.length}
+                  aria-label={t.undo}
                   style={{
                     color: glowColor,
                     borderColor: glowColor,
@@ -726,8 +731,10 @@ export default function Tasbih() {
                   {t.undo}
                 </button>
                 <button
+                  type="button"
                   className="action-btn"
                   onClick={handleCopyCount}
+                  aria-label={t.copy}
                   style={{
                     color: glowColor,
                     borderColor: glowColor,
@@ -741,20 +748,29 @@ export default function Tasbih() {
             <h4 style={{ color: glowColor }}>{t.language}</h4>
             <div className="lang-buttons">
               <button
+                type="button"
                 className={lang === "uz" ? "active" : ""}
                 onClick={() => setLang("uz")}
+                aria-label="Switch language to Uzbek"
+                aria-pressed={lang === "uz"}
               >
                 UZ
               </button>
               <button
+                type="button"
                 className={lang === "en" ? "active" : ""}
                 onClick={() => setLang("en")}
+                aria-label="Switch language to English"
+                aria-pressed={lang === "en"}
               >
                 EN
               </button>
               <button
+                type="button"
                 className={lang === "ru" ? "active" : ""}
                 onClick={() => setLang("ru")}
+                aria-label="Switch language to Russian"
+                aria-pressed={lang === "ru"}
               >
                 RU
               </button>
@@ -763,8 +779,11 @@ export default function Tasbih() {
             <hr style={{ borderColor: `${glowColor}40`, margin: "10px 0" }} />
 
             <button
+              type="button"
               className="sound-toggle full-width"
               onClick={() => setSoundEnabled(!soundEnabled)}
+              aria-label={soundEnabled ? "Turn sound off" : "Turn sound on"}
+              aria-pressed={soundEnabled}
               style={{
                 color: soundEnabled ? glowColor : "inherit",
                 borderColor: soundEnabled ? glowColor : "rgba(128,128,128,0.5)",
@@ -773,8 +792,11 @@ export default function Tasbih() {
               {soundEnabled ? t.soundOn : t.soundOff}
             </button>
             <button
+              type="button"
               className="sound-toggle full-width"
               onClick={() => setVibrationEnabled(!vibrationEnabled)}
+              aria-label={vibrationEnabled ? "Turn vibration off" : "Turn vibration on"}
+              aria-pressed={vibrationEnabled}
               style={{
                 color: vibrationEnabled ? glowColor : "inherit",
                 borderColor: vibrationEnabled
@@ -786,8 +808,10 @@ export default function Tasbih() {
               {t.vibration}: {vibrationEnabled ? "ON" : "OFF"}
             </button>
             <button
+              type="button"
               className="sound-toggle full-width"
               onClick={() => setIsDarkMode(!isDarkMode)}
+              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
               style={{
                 color: glowColor,
                 borderColor: glowColor,
@@ -810,9 +834,12 @@ export default function Tasbih() {
       <div className="mode-selector">
         {DEFAULT_MODES.map((m, i) => (
           <button
+            type="button"
             key={m.label}
             className={`mode-btn ${i === mode ? "active" : ""}`}
             onClick={() => handleModeChange(i)}
+            aria-label={`Select ${m.label} count target mode`}
+            aria-pressed={i === mode}
             style={
               i === mode
                 ? {
@@ -835,6 +862,7 @@ export default function Tasbih() {
             type="number"
             min="1"
             value={customTarget}
+            aria-label="Custom target count"
             onChange={(e) => {
               let val = e.target.value === "" ? "" : parseInt(e.target.value);
               if (val !== "" && val < 1) val = 1;
@@ -862,15 +890,18 @@ export default function Tasbih() {
         ))}
 
         <button
+          type="button"
           ref={buttonRef}
           className="count-button"
           onClick={handleCount}
+          aria-label={`Add one count to tasbih. Current total is ${count}.`}
+          aria-live="polite"
           style={{
             boxShadow: `0 0 40px ${glowColor}, 0 0 80px ${glowColor}40, inset 0 0 30px ${glowColor}20`,
             borderColor: glowColor,
           }}
         >
-          <span className="count-number" style={{ color: glowColor }}>
+          <span className="count-number" style={{ color: glowColor }} aria-live="polite">
             {count % (target === Infinity ? Infinity : target)}
           </span>
         </button>
@@ -905,8 +936,10 @@ export default function Tasbih() {
       </div>
 
       <button
+        type="button"
         className="reset-btn"
         onClick={handleReset}
+        aria-label="Reset current tasbih count"
         style={{
           color: glowColor,
           borderColor: `${glowColor}40`,
