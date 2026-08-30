@@ -5,6 +5,13 @@ import "./App.css";
 
 function App() {
   const [loading, setLoading] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    try {
+      return localStorage.getItem("tasbih_isDarkMode") !== "false";
+    } catch {
+      return true;
+    }
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -13,7 +20,24 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  return <main className="app">{loading ? <Loading /> : <Tasbih />}</main>;
+  useEffect(() => {
+    const syncTheme = () => {
+      try {
+        const value = localStorage.getItem("tasbih_isDarkMode");
+        setIsDarkMode(value === null ? true : value === "true");
+      } catch {
+        setIsDarkMode(true);
+      }
+    };
+
+    syncTheme();
+  }, []);
+
+  return (
+    <main className={`app ${isDarkMode ? "theme-dark" : "theme-light"}`}>
+      {loading ? <Loading isDarkMode={isDarkMode} /> : <Tasbih />}
+    </main>
+  );
 }
 
 export default App;

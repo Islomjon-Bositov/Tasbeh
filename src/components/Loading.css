@@ -5,13 +5,21 @@
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: hsl(210, 40%, 8%);
-  color: hsl(210, 80%, 60%);
   position: fixed;
   top: 0;
   left: 0;
   z-index: 9999;
-  animation: show 2s ease-in-out;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.loading-container.dark-mode {
+  background-color: hsl(210, 40%, 8%);
+  color: hsl(210, 80%, 60%);
+}
+
+.loading-container.light-mode {
+  background-color: #f5f7fb;
+  color: hsl(210, 80%, 45%);
 }
 
 .loader {
@@ -23,10 +31,11 @@
 .circle {
   width: 20px;
   height: 20px;
-  background-color: hsl(210, 80%, 60%);
-  box-shadow: 0 0 10px hsl(210, 80%, 60%);
+  background-color: currentColor;
+  box-shadow: 0 0 10px currentColor;
   border-radius: 50%;
   animation: bounce 0.5s alternate infinite;
+  opacity: 0.9;
 }
 
 .circle:nth-child(2) {

@@ -4,8 +4,36 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#0b1020" />
-    <link rel="icon" type="image/svg+xml" href="./src/assets/ramadan-rosary.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Tasbih</title>
+    <script>
+      (() => {
+        try {
+          const saved = localStorage.getItem("tasbih_isDarkMode");
+          const isDarkMode = saved === null ? true : saved === "true";
+          const theme = isDarkMode ? "dark" : "light";
+          const background = isDarkMode ? "#050d1b" : "#edf6ff";
+
+          document.documentElement.style.colorScheme = theme;
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.style.backgroundColor = background;
+
+          if (document.body) {
+            document.body.style.backgroundColor = background;
+          }
+
+          const themeMeta = document.querySelector('meta[name="theme-color"]');
+          if (themeMeta) {
+            themeMeta.setAttribute("content", isDarkMode ? "#050d1b" : "#edf6ff");
+          }
+        } catch (error) {
+          document.documentElement.style.colorScheme = "dark";
+          if (document.body) {
+            document.body.style.backgroundColor = "#050d1b";
+          }
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

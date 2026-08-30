@@ -1,8 +1,8 @@
 import "./Loading.css";
 
-const Loading = () => {
+const Loading = ({ isDarkMode = true }) => {
   return (
-    <div className="loading-container">
+    <div className={`loading-container ${isDarkMode ? "dark-mode" : "light-mode"}`}>
       <div className="loader">
         <div className="circle"></div>
         <div className="circle"></div>
