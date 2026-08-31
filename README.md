@@ -1,16 +1,113 @@
-# React + Vite
+# Tasbih
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Modern va zamonaviy digital tasbih hisoblagichi. Bu loyiha foydalanuvchiga tasbih sonini hisoblash, kunlik streak kuzatib borish, maqsad belgilash va kundalik faoliyat statistikasi ko'rish imkonini beradi.
 
-Currently, two official plugins are available:
+## Xususiyatlar
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Yagona bosishda tasbih sanash
+- Maqsadli hisoblash rejimi
+- Kunlik streak va eng yaxshi streak kuzatuvi
+- Har kuni faoliyatni saqlash va heatmap/statistika ko'rsatish
+- Ovoz va vibratsiya effektlari
+- Dark / light rejim
+- Ko'p tilli interfeys (uz, en, ru)
+- Vite + React bilan ishlangan zamonaviy frontend
+- PWA uchun manifest va favicon sozlamalari
 
-## React Compiler
+## Texnologiyalar
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 19
+- Vite
+- JavaScript
+- CSS Modules-style custom styling
+- LocalStorage bilan ma'lumot saqlash
 
-## Expanding the Oxlint configuration
+## Loyihani ishga tushirish
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+1. Repozitoriyani klonlang:
+
+```bash
+git clone <repository-url>
+cd Tasbeh
+```
+
+2. Bog'lanish uchun dependency'larni o'rnating:
+
+```bash
+npm install
+```
+
+3. Dev server ni ishga tushiring:
+
+```bash
+npm run dev
+```
+
+4. Brauzerda quyidagi manzilni oching:
+
+```text
+http://localhost:5173
+```
+
+## Build qilish
+
+Production build yaratish uchun:
+
+```bash
+npm run build
+```
+
+Preview qilish:
+
+```bash
+npm run preview
+```
+
+## Skriptlar
+
+- `npm run dev` — dev server ni ishga tushirish
+- `npm run build` — production build yaratish
+- `npm run preview` — build qilingan appni ko'rib chiqish
+- `npm run lint` — lint tekshiruvi
+
+## Ma'lumotlarni saqlash
+
+Loyiha asosiy holatlarni `localStorage` orqali saqlaydi, jumladan:
+
+- sanash qiymati
+- kunlik streak
+- eng yaxshi streak
+- maqsadlar
+- aktivlik tarixi
+- sozlamalar (til, ovoz, vibratsiya va boshqalar)
+
+## Strukturasi
+
+```text
+Tasbeh/
+├── public/
+│   ├── favicon.svg
+│   ├── icons.svg
+│   └── site.webmanifest
+├── src/
+│   ├── assets/
+│   ├── components/
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── styles/
+├── index.html
+├── package.json
+├── README.md
+└── vite.config.js
+```
+
+## Ishlatilishi
+
+- Tasbihni sanash uchun markazdagi tugmani bosing.
+- Har bir aylanma yoki maqsad chegarasiga yetganda statistikalar avtomatik yangilanadi.
+- Sozlamalar orqali tilni, ovozni, vibratsiyani yoki maqsadni o'zgartirishingiz mumkin.
+- Statistics bo'limida kunlik faoliyatingizni ko'rib borishingiz mumkin.
+
+## Eslatma
+
+Loyiha shaxsiy ibodat va tasbih amaliyoti uchun mo'ljallangan bo'lib, foydalanuvchining lokal ma'lumotlari brauzerda saqlanadi. Bu ma'lumotlar serverga yuborilmaydi.

@@ -228,31 +228,14 @@ export default function Tasbih() {
       localStorage.getItem("tasbih_daily_streak") || "1",
     );
     const savedDate = localStorage.getItem("tasbih_last_active_date");
-    const today = new Date().toISOString().slice(0, 10);
 
     if (!savedDate) {
-      localStorage.setItem("tasbih_last_active_date", today);
+      localStorage.setItem("tasbih_last_active_date", new Date().toISOString().slice(0, 10));
       localStorage.setItem("tasbih_daily_streak", "1");
       return 1;
     }
 
-    const diffDays = Math.floor(
-      (new Date(today).getTime() -
-        new Date(`${savedDate}T00:00:00`).getTime()) /
-        86400000,
-    );
-
-    if (diffDays === 0) return savedStreak;
-    if (diffDays === 1) {
-      const next = savedStreak + 1;
-      localStorage.setItem("tasbih_last_active_date", today);
-      localStorage.setItem("tasbih_daily_streak", String(next));
-      return next;
-    }
-
-    localStorage.setItem("tasbih_last_active_date", today);
-    localStorage.setItem("tasbih_daily_streak", "1");
-    return 1;
+    return Number.isFinite(savedStreak) && savedStreak > 0 ? savedStreak : 1;
   });
   const [bestStreak, setBestStreak] = useState(() =>
     Number(localStorage.getItem("tasbih_best_streak") || "1"),
@@ -368,11 +351,13 @@ export default function Tasbih() {
     activityLog,
   ]);
 
-  useEffect(() => {
+  const updateDailyStreakOnActivity = useCallback(() => {
     const today = new Date().toISOString().slice(0, 10);
     const savedDate = localStorage.getItem("tasbih_last_active_date");
+
     if (!savedDate) {
       localStorage.setItem("tasbih_last_active_date", today);
+      localStorage.setItem("tasbih_daily_streak", String(dailyStreak));
       return;
     }
 
@@ -382,7 +367,10 @@ export default function Tasbih() {
         86400000,
     );
 
-    if (diffDays <= 0) return;
+    if (diffDays <= 0) {
+      localStorage.setItem("tasbih_last_active_date", today);
+      return;
+    }
 
     if (streakFreezes > 0) {
       setStreakFreezes((prev) => {
@@ -394,9 +382,11 @@ export default function Tasbih() {
       return;
     }
 
-    const next = diffDays === 1 ? dailyStreak + 1 : 1;
-    setDailyStreak(next);
-    localStorage.setItem("tasbih_daily_streak", String(next));
+    setDailyStreak((prev) => {
+      const next = diffDays === 1 ? prev + 1 : 1;
+      localStorage.setItem("tasbih_daily_streak", String(next));
+      return next;
+    });
     localStorage.setItem("tasbih_last_active_date", today);
   }, [dailyStreak, streakFreezes]);
 
@@ -421,6 +411,7 @@ export default function Tasbih() {
   const bgColor = isDarkMode ? `hsl(${HUE}, 40%, 8%)` : `hsl(${HUE}, 20%, 95%)`;
 
   const handleCount = useCallback(() => {
+    updateDailyStreakOnActivity();
     setCountHistory((prev) => [...prev.slice(-9), count]);
     const nextCount = count + 1;
     setCount(nextCount);
@@ -473,7 +464,7 @@ export default function Tasbih() {
       setRipples((prev) => prev.filter((r) => r.id !== ripple.id));
     }, 700);
     timeouts.current.push(t3);
-  }, [count, soundEnabled, vibrationEnabled]);
+  }, [count, soundEnabled, vibrationEnabled, updateDailyStreakOnActivity]);
 
   const handleUndo = useCallback(() => {
     if (!countHistory.length) return;
@@ -528,24 +519,24 @@ export default function Tasbih() {
     target === Infinity || target <= 0
       ? 0
       : Math.min((count / target) * 100, 100);
+  const maxDailyValue = Math.max(
+    1,
+    ...Object.values(activityLog).map((item) => Number(item) || 0),
+  );
 
   const activitySquares = Array.from({ length: 28 }, (_, index) => {
     const date = new Date();
     date.setDate(date.getDate() - (27 - index));
     const key = date.toISOString().slice(0, 10);
     const value = Number(activityLog[key] || 0);
-    const maxValue = Math.max(
-      1,
-      ...Object.values(activityLog).map((item) => Number(item) || 0),
-    );
     let level = 0;
     if (value > 0)
       level =
-        value >= maxValue
+        value >= maxDailyValue
           ? 4
-          : value >= maxValue * 0.75
+          : value >= maxDailyValue * 0.75
             ? 3
-            : value >= maxValue * 0.4
+            : value >= maxDailyValue * 0.4
               ? 2
               : 1;
     return { key, value, level, date };
@@ -608,218 +599,231 @@ export default function Tasbih() {
               boxShadow: `0 0 15px ${glowColor}40`,
             }}
           >
-            <div className="settings-title" style={{ color: glowColor }}>
-              {t.settings}
-            </div>
-
-            <div
-              className="daily-streak-card"
-              style={{
-                borderColor: `${glowColor}60`,
-                boxShadow: `0 0 12px ${glowColor}25`,
-              }}
-            >
-              <div className="daily-streak-label">{t.dailyStreak}</div>
-              <div className="daily-streak-value" style={{ color: glowColor }}>
-                <span className="streak-icon">🔥</span>
-                <strong>{dailyStreak}</strong>
-                <span className="streak-unit">{t.days}</span>
+            <div className="settings-scroll">
+              <div className="settings-title" style={{ color: glowColor }}>
+                {t.settings}
               </div>
-            </div>
 
-            <div
-              className="daily-streak-card best-card"
-              style={{
-                borderColor: `${glowColor}60`,
-                boxShadow: `0 0 12px ${glowColor}25`,
-              }}
-            >
-              <div className="daily-streak-label">{t.bestStreak}</div>
-              <div className="daily-streak-value" style={{ color: glowColor }}>
-                <span className="streak-icon">🏆</span>
-                <strong>{bestStreak}</strong>
-                <span className="streak-unit">{t.days}</span>
-              </div>
-            </div>
-
-            <div
-              className="daily-streak-card"
-              style={{
-                borderColor: `${glowColor}60`,
-                boxShadow: `0 0 12px ${glowColor}25`,
-              }}
-            >
-              <div className="daily-streak-label">{t.freeze}</div>
-              <div className="daily-streak-value" style={{ color: glowColor }}>
-                <span className="streak-icon">❄️</span>
-                <strong>{streakFreezes}</strong>
-                <span className="streak-unit">{t.freezes}</span>
-              </div>
-            </div>
-
-            <div
-              className="mini-stats"
-              style={{ borderColor: `${glowColor}40` }}
-            >
-              <div className="mini-stat">
-                <span>{t.today}</span>
-                <strong style={{ color: glowColor }}>{totalToday}</strong>
-              </div>
-              <div className="mini-stat">
-                <span>{t.total}</span>
-                <strong style={{ color: glowColor }}>{totalCount}</strong>
-              </div>
-            </div>
-
-            {target !== Infinity && (
               <div
-                className="goal-progress"
+                className="daily-streak-card"
+                style={{
+                  borderColor: `${glowColor}60`,
+                  boxShadow: `0 0 12px ${glowColor}25`,
+                }}
+              >
+                <div className="daily-streak-label">{t.dailyStreak}</div>
+                <div className="daily-streak-value" style={{ color: glowColor }}>
+                  <span className="streak-icon">🔥</span>
+                  <strong>{dailyStreak}</strong>
+                  <span className="streak-unit">{t.days}</span>
+                </div>
+              </div>
+
+              <div
+                className="daily-streak-card best-card"
+                style={{
+                  borderColor: `${glowColor}60`,
+                  boxShadow: `0 0 12px ${glowColor}25`,
+                }}
+              >
+                <div className="daily-streak-label">{t.bestStreak}</div>
+                <div className="daily-streak-value" style={{ color: glowColor }}>
+                  <span className="streak-icon">🏆</span>
+                  <strong>{bestStreak}</strong>
+                  <span className="streak-unit">{t.days}</span>
+                </div>
+              </div>
+
+              <div
+                className="daily-streak-card"
+                style={{
+                  borderColor: `${glowColor}60`,
+                  boxShadow: `0 0 12px ${glowColor}25`,
+                }}
+              >
+                <div className="daily-streak-label">{t.freeze}</div>
+                <div className="daily-streak-value" style={{ color: glowColor }}>
+                  <span className="streak-icon">❄️</span>
+                  <strong>{streakFreezes}</strong>
+                  <span className="streak-unit">{t.freezes}</span>
+                </div>
+              </div>
+
+              <div
+                className="mini-stats"
                 style={{ borderColor: `${glowColor}40` }}
               >
+                <div className="mini-stat">
+                  <span>{t.today}</span>
+                  <strong style={{ color: glowColor }}>{totalToday}</strong>
+                </div>
+                <div className="mini-stat">
+                  <span>{t.total}</span>
+                  <strong style={{ color: glowColor }}>{totalCount}</strong>
+                </div>
+              </div>
+
+              {target !== Infinity && (
                 <div
-                  className="goal-progress-header"
-                  style={{ color: glowColor }}
+                  className="goal-progress"
+                  style={{ borderColor: `${glowColor}40` }}
                 >
-                  <span>{t.goal}</span>
-                  <strong>{Math.min(Math.round(progressPercent), 100)}%</strong>
-                </div>
-                <div className="progress-track">
                   <div
-                    className="progress-bar"
-                    style={{
-                      width: `${Math.min(progressPercent, 100)}%`,
-                      background: `linear-gradient(90deg, ${glowColor}, rgba(255,255,255,0.9))`,
-                    }}
-                  />
+                    className="goal-progress-header"
+                    style={{ color: glowColor }}
+                  >
+                    <span>{t.goal}</span>
+                    <strong>{Math.min(Math.round(progressPercent), 100)}%</strong>
+                  </div>
+                  <div className="progress-track">
+                    <div
+                      className="progress-bar"
+                      style={{
+                        width: `${Math.min(progressPercent, 100)}%`,
+                        background: `linear-gradient(90deg, ${glowColor}, rgba(255,255,255,0.9))`,
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+
+              <div className="heatmap-block">
+                <div className="heatmap-label" style={{ color: glowColor }}>
+                  {t.stats}
+                </div>
+                <div className="heatmap-content">
+                  <div className="activity-grid" aria-label="activity heatmap">
+                    {activitySquares.map((item) => (
+                      <span
+                        key={item.key}
+                        className={`activity-cell level-${item.level}`}
+                        aria-label={`${item.date.toLocaleDateString()} • ${item.value} ${t.counted}`}
+                        data-tooltip={`${item.date.toLocaleDateString()} • ${item.value} ${t.counted}`}
+                      />
+                    ))}
+                  </div>
+
+                  <div className="activity-scale" aria-label="Activity intensity scale">
+                    {Array.from({ length: 5 }, (_, index) => (
+                      <span
+                        key={`scale-${index}`}
+                        className={`activity-scale-cell level-${Math.min(4, index)}`}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
-            )}
 
-            <div className="heatmap-block">
-              <div className="heatmap-label" style={{ color: glowColor }}>
-                {t.stats}
+              <div className="quick-actions">
+                <div className="quick-title" style={{ color: glowColor }}>
+                  {t.quickActions}
+                </div>
+                <div className="action-buttons">
+                  <button
+                    type="button"
+                    className="action-btn"
+                    onClick={handleUndo}
+                    disabled={!countHistory.length}
+                    aria-label={t.undo}
+                    style={{
+                      color: glowColor,
+                      borderColor: glowColor,
+                      opacity: countHistory.length ? 1 : 0.5,
+                    }}
+                  >
+                    {t.undo}
+                  </button>
+                  <button
+                    type="button"
+                    className="action-btn"
+                    onClick={handleCopyCount}
+                    aria-label={t.copy}
+                    style={{
+                      color: glowColor,
+                      borderColor: glowColor,
+                    }}
+                  >
+                    {copyStatus || t.copy}
+                  </button>
+                </div>
               </div>
-              <div className="activity-grid" aria-label="activity heatmap">
-                {activitySquares.map((item) => (
-                  <span
-                    key={item.key}
-                    className={`activity-cell level-${item.level}`}
-                    aria-label={`${item.date.toLocaleDateString()} • ${item.value} ${t.counted}`}
-                    data-tooltip={`${item.date.toLocaleDateString()} • ${item.value} ${t.counted}`}
-                  />
-                ))}
-              </div>
-            </div>
 
-            <div className="quick-actions">
-              <div className="quick-title" style={{ color: glowColor }}>
-                {t.quickActions}
-              </div>
-              <div className="action-buttons">
+              <h4 style={{ color: glowColor }}>{t.language}</h4>
+              <div className="lang-buttons">
                 <button
                   type="button"
-                  className="action-btn"
-                  onClick={handleUndo}
-                  disabled={!countHistory.length}
-                  aria-label={t.undo}
-                  style={{
-                    color: glowColor,
-                    borderColor: glowColor,
-                    opacity: countHistory.length ? 1 : 0.5,
-                  }}
+                  className={lang === "uz" ? "active" : ""}
+                  onClick={() => setLang("uz")}
+                  aria-label="Switch language to Uzbek"
+                  aria-pressed={lang === "uz"}
                 >
-                  {t.undo}
+                  UZ
                 </button>
                 <button
                   type="button"
-                  className="action-btn"
-                  onClick={handleCopyCount}
-                  aria-label={t.copy}
-                  style={{
-                    color: glowColor,
-                    borderColor: glowColor,
-                  }}
+                  className={lang === "en" ? "active" : ""}
+                  onClick={() => setLang("en")}
+                  aria-label="Switch language to English"
+                  aria-pressed={lang === "en"}
                 >
-                  {copyStatus || t.copy}
+                  EN
+                </button>
+                <button
+                  type="button"
+                  className={lang === "ru" ? "active" : ""}
+                  onClick={() => setLang("ru")}
+                  aria-label="Switch language to Russian"
+                  aria-pressed={lang === "ru"}
+                >
+                  RU
                 </button>
               </div>
+
+              <hr style={{ borderColor: `${glowColor}40`, margin: "10px 0" }} />
+
+              <button
+                type="button"
+                className="sound-toggle full-width"
+                onClick={() => setSoundEnabled(!soundEnabled)}
+                aria-label={soundEnabled ? "Turn sound off" : "Turn sound on"}
+                aria-pressed={soundEnabled}
+                style={{
+                  color: soundEnabled ? glowColor : "inherit",
+                  borderColor: soundEnabled ? glowColor : "rgba(128,128,128,0.5)",
+                }}
+              >
+                {soundEnabled ? t.soundOn : t.soundOff}
+              </button>
+              <button
+                type="button"
+                className="sound-toggle full-width"
+                onClick={() => setVibrationEnabled(!vibrationEnabled)}
+                aria-label={vibrationEnabled ? "Turn vibration off" : "Turn vibration on"}
+                aria-pressed={vibrationEnabled}
+                style={{
+                  color: vibrationEnabled ? glowColor : "inherit",
+                  borderColor: vibrationEnabled
+                    ? glowColor
+                    : "rgba(128,128,128,0.5)",
+                  marginTop: "8px",
+                }}
+              >
+                {t.vibration}: {vibrationEnabled ? "ON" : "OFF"}
+              </button>
+              <button
+                type="button"
+                className="sound-toggle full-width"
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
+                style={{
+                  color: glowColor,
+                  borderColor: glowColor,
+                  marginTop: "8px",
+                }}
+              >
+                {isDarkMode ? t.lightMode : t.darkMode}
+              </button>
             </div>
-
-            <h4 style={{ color: glowColor }}>{t.language}</h4>
-            <div className="lang-buttons">
-              <button
-                type="button"
-                className={lang === "uz" ? "active" : ""}
-                onClick={() => setLang("uz")}
-                aria-label="Switch language to Uzbek"
-                aria-pressed={lang === "uz"}
-              >
-                UZ
-              </button>
-              <button
-                type="button"
-                className={lang === "en" ? "active" : ""}
-                onClick={() => setLang("en")}
-                aria-label="Switch language to English"
-                aria-pressed={lang === "en"}
-              >
-                EN
-              </button>
-              <button
-                type="button"
-                className={lang === "ru" ? "active" : ""}
-                onClick={() => setLang("ru")}
-                aria-label="Switch language to Russian"
-                aria-pressed={lang === "ru"}
-              >
-                RU
-              </button>
-            </div>
-
-            <hr style={{ borderColor: `${glowColor}40`, margin: "10px 0" }} />
-
-            <button
-              type="button"
-              className="sound-toggle full-width"
-              onClick={() => setSoundEnabled(!soundEnabled)}
-              aria-label={soundEnabled ? "Turn sound off" : "Turn sound on"}
-              aria-pressed={soundEnabled}
-              style={{
-                color: soundEnabled ? glowColor : "inherit",
-                borderColor: soundEnabled ? glowColor : "rgba(128,128,128,0.5)",
-              }}
-            >
-              {soundEnabled ? t.soundOn : t.soundOff}
-            </button>
-            <button
-              type="button"
-              className="sound-toggle full-width"
-              onClick={() => setVibrationEnabled(!vibrationEnabled)}
-              aria-label={vibrationEnabled ? "Turn vibration off" : "Turn vibration on"}
-              aria-pressed={vibrationEnabled}
-              style={{
-                color: vibrationEnabled ? glowColor : "inherit",
-                borderColor: vibrationEnabled
-                  ? glowColor
-                  : "rgba(128,128,128,0.5)",
-                marginTop: "8px",
-              }}
-            >
-              {t.vibration}: {vibrationEnabled ? "ON" : "OFF"}
-            </button>
-            <button
-              type="button"
-              className="sound-toggle full-width"
-              onClick={() => setIsDarkMode(!isDarkMode)}
-              aria-label={isDarkMode ? "Switch to light mode" : "Switch to dark mode"}
-              style={{
-                color: glowColor,
-                borderColor: glowColor,
-                marginTop: "8px",
-              }}
-            >
-              {isDarkMode ? t.lightMode : t.darkMode}
-            </button>
           </div>
         )}
       </div>

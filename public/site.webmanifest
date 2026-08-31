@@ -1,5 +1,5 @@
 {
-  "name": "Tasbih Digital Counter",
+  "name": "Tasbih",
   "short_name": "Tasbih",
   "description": "Digital tasbih counter with streak tracking, daily goals, and habit stats.",
   "start_url": "/",
@@ -9,9 +9,9 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/src/assets/tasbih.png",
+      "sizes": "256x256",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ]
