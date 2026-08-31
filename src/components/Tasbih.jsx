@@ -447,7 +447,7 @@ export default function Tasbih() {
     const todayKey = new Date().toISOString().slice(0, 10);
     setActivityLog((prev) => ({
       ...prev,
-      [todayKey]: nextCount,
+      [todayKey]: (Number(prev[todayKey]) || 0) + 1,
     }));
 
     const newParticles = generateParticles().map((p) => ({
@@ -471,6 +471,11 @@ export default function Tasbih() {
     const previousCount = countHistory[countHistory.length - 1];
     setCountHistory((prev) => prev.slice(0, -1));
     setCount(previousCount);
+    const todayKey = new Date().toISOString().slice(0, 10);
+    setActivityLog((prev) => ({
+      ...prev,
+      [todayKey]: Math.max(0, (Number(prev[todayKey]) || 0) - 1),
+    }));
     if (navigator.vibrate) navigator.vibrate(30);
   }, [countHistory]);
 
@@ -488,15 +493,13 @@ export default function Tasbih() {
   }, [count, t.copy]);
 
   const handleReset = useCallback(() => {
-    setCountHistory((prev) => [...prev.slice(-9), count]);
-    setCount(0);
     const todayKey = new Date().toISOString().slice(0, 10);
     setActivityLog((prev) => ({
       ...prev,
       [todayKey]: 0,
     }));
     if (vibrationEnabled && navigator.vibrate) navigator.vibrate([30, 50, 30]);
-  }, [count, vibrationEnabled]);
+  }, [vibrationEnabled]);
 
   const handleModeChange = (i) => {
     if (DEFAULT_MODES[i].isCustom) {
