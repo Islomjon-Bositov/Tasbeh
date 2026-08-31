@@ -9,7 +9,7 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/src/assets/tasbih.png",
+      "src": "/tasbih.png",
       "sizes": "256x256",
       "type": "image/png",
       "purpose": "any maskable"
