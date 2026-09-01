@@ -15,13 +15,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 20px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   transition: background 0.8s ease;
-  padding: 20px;
+  padding: 24px 20px 80px;
 }
 
 .stars {
@@ -72,48 +73,141 @@
 }
 
 .settings-container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  z-index: 30;
-  transition: all 0.3s ease;
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 40;
+  transition: all 0.25s ease;
+}
+
+.settings-container.logged-in-shell {
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  bottom: 18px;
+  width: min(320px, calc(100vw - 28px));
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
 }
 
 .settings-container.show-settings {
-  top: 20px;
-  right: 20px;
-  width: min(350px, calc(100vw - 24px));
+  top: 18px;
+  left: 18px;
+  width: min(320px, calc(100vw - 28px));
+}
+
+.settings-container.logged-in-shell.show-settings {
+  top: 18px;
+  left: 18px;
+  width: min(320px, calc(100vw - 28px));
+}
+
+.settings-container.logged-in-shell .settings-dropdown {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  height: calc(100vh - 110px);
+  max-height: none;
 }
 
 .settings-header-inline {
   display: flex;
   align-items: center;
   gap: 10px;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .settings-container.show-settings .settings-header-inline {
-  width: 100%;
-  justify-content: flex-end;
+  width: auto;
+  justify-content: flex-start;
   margin-bottom: 10px;
 }
 
-.streak-mini-badge {
+.sidebar-toggle-btn,
+.profile-mini-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 10px;
+  gap: 8px;
+  padding: 9px 12px 9px 10px;
   border: 1px solid;
-  border-radius: 12px;
+  border-radius: 14px;
   background: rgba(12, 16, 30, 0.72);
   font-family: "Orbitron", monospace;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.7px;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.hamburger-lines {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.hamburger-lines span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+}
+
+.menu-pill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.profile-chip-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mini-badge-icon {
   font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.login-entry-btn {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  background: rgba(12, 16, 30, 0.72);
+  color: #fff;
+  font-family: "Orbitron", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.login-entry-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
 }
 
 .settings-icon {
@@ -162,9 +256,9 @@
 }
 
 .settings-dropdown {
-  position: absolute;
-  top: 62px;
-  right: 0;
+  position: fixed;
+  top: 72px;
+  left: 18px;
   background: rgba(7, 11, 20, 0.94);
   border: 1px solid;
   border-radius: 16px;
@@ -174,7 +268,7 @@
   gap: 10px;
   min-width: 230px;
   width: 290px;
-  max-width: calc(100vw - 40px);
+  max-width: calc(100vw - 28px);
   animation: slideDown 0.3s ease;
   transition:
     width 0.25s ease,
@@ -190,19 +284,33 @@
   max-height: min(70vh, 620px);
   overflow-y: auto;
   overflow-x: hidden;
-  padding-right: 4px;
+  padding-right: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 }
 
 .settings-container.show-settings .settings-dropdown {
-  position: relative;
-  top: 0;
-  right: auto;
-  width: 100%;
+  position: fixed;
+  top: 72px;
+  left: 18px;
+  width: min(320px, calc(100vw - 28px));
   min-width: 0;
   max-width: none;
   padding: 18px 16px;
   border-radius: 20px;
   overflow: visible;
+}
+
+.settings-container.logged-in-shell.show-settings .settings-dropdown {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  padding: 18px 18px 16px;
+  border-radius: 24px;
+  height: calc(100vh - 112px);
 }
 
 .settings-container.show-settings .settings-scroll {
@@ -212,6 +320,14 @@
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
   scrollbar-gutter: stable;
+}
+
+.settings-container.logged-in-shell.show-settings .settings-scroll {
+  max-height: none;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 }
 
 .settings-container.show-settings .settings-scroll::-webkit-scrollbar {
@@ -228,7 +344,76 @@
 }
 
 .light-mode .settings-dropdown {
+  background: rgba(255, 255, 255, 0.96);
+  color: #0f172a;
+  border-color: rgba(15, 23, 42, 0.18);
+}
+
+.light-mode .settings-title,
+.light-mode .profile-label,
+.light-mode .account-section-title,
+.light-mode .menu-nav-btn,
+.light-mode .mini-stat span,
+.light-mode .goal-progress-header,
+.light-mode .heatmap-label,
+.light-mode .streak-unit,
+.light-mode .daily-streak-label,
+.light-mode .service-capacity,
+.light-mode .login-message {
+  color: #0f172a;
+}
+
+.light-mode .menu-nav-btn {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+}
+
+.light-mode .menu-nav-btn.active {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.28);
+  color: #0f172a;
+}
+
+.light-mode .duolingo-shell,
+.light-mode .duolingo-metric-card,
+.light-mode .challenge-card,
+.light-mode .lesson-card,
+.light-mode .duolingo-xp,
+.light-mode .duolingo-quest-card {
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(15, 23, 42, 0.12);
+  color: #0f172a;
+}
+
+.light-mode .duolingo-hero {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(168, 85, 247, 0.06));
+}
+
+.light-mode .duolingo-ring-inner {
+  background: rgba(255, 255, 255, 0.94);
+  border-color: rgba(15, 23, 42, 0.08);
+}
+
+.light-mode .profile-input {
+  background: rgba(15, 23, 42, 0.04);
+  color: #0f172a;
+}
+
+.light-mode .bottom-nav {
   background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(15, 23, 42, 0.1);
+}
+
+.light-mode .bottom-nav-item {
+  background: rgba(15, 23, 42, 0.04);
+  border-color: rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+}
+
+.light-mode .bottom-nav-item.active {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.2);
 }
 
 .settings-title {
@@ -236,6 +421,1169 @@
   letter-spacing: 3px;
   text-transform: uppercase;
   font-weight: 700;
+}
+
+.theme-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border: 1px solid;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 12px;
+}
+
+.theme-panel-header {
+  font-size: 0.54rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.theme-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.theme-option {
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 8px 10px;
+  font-family: "Orbitron", monospace;
+  font-size: 0.58rem;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.theme-option.selected {
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.08);
+}
+
+.menu-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.menu-nav-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+  padding: 7px 6px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: "Orbitron", monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.9px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.menu-nav-btn.active {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.42);
+  color: #ffffff;
+}
+
+.profile-label {
+  font-size: 0.56rem;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.profile-input {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: white;
+  font-size: 0.8rem;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.password-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+}
+
+.password-input-wrap .profile-input {
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.password-toggle-btn {
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 12px 0 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bottom-nav {
+  position: sticky;
+  bottom: 18px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  width: min(100%, 760px);
+  margin-top: 6px;
+  padding: 10px;
+  border: 1px solid;
+  border-radius: 18px;
+  background: rgba(9, 13, 23, 0.72);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 26px rgba(15, 23, 42, 0.28);
+  z-index: 10;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 8px 6px 7px;
+  font-size: 0.46rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bottom-nav-item.active {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.32);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.bottom-nav-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.duolingo-shell {
+  width: min(100%, 760px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: -6px;
+  padding: 14px;
+  border: 1px solid;
+  border-radius: 22px;
+  background: rgba(9, 13, 23, 0.52);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 18px 35px rgba(15, 23, 42, 0.18);
+  z-index: 1;
+}
+
+.duolingo-topbar,
+.lesson-header,
+.challenge-head,
+.duolingo-metrics,
+.duolingo-hero,
+.duolingo-copy,
+.lesson-card-top {
+  display: flex;
+  align-items: center;
+}
+
+.duolingo-topbar,
+.lesson-header,
+.challenge-head {
+  justify-content: space-between;
+}
+
+.duolingo-label,
+.lesson-header span,
+.duolingo-kicker {
+  font-size: 0.52rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.duolingo-xp {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: "Orbitron", monospace;
+  font-size: 0.58rem;
+}
+
+.duolingo-xp strong {
+  font-size: 0.72rem;
+}
+
+.duolingo-hero {
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+}
+
+.duolingo-copy {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  flex: 1;
+}
+
+.duolingo-copy h2 {
+  font-size: clamp(1.2rem, 2vw, 1.7rem);
+  line-height: 1.1;
+  letter-spacing: 0.2px;
+}
+
+.duolingo-copy p {
+  font-size: 0.6rem;
+  line-height: 1.5;
+  opacity: 0.75;
+}
+
+.duolingo-ring-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+  padding: 6px;
+}
+
+.duolingo-ring {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  padding: 8px;
+}
+
+.duolingo-ring-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(7, 12, 20, 0.82);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.duolingo-ring-inner strong {
+  font-family: "Orbitron", monospace;
+  font-size: 0.82rem;
+}
+
+.duolingo-ring-inner span {
+  font-size: 0.42rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.duolingo-quest-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.02);
+}
+
+.duolingo-quest-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.duolingo-quest-copy h3 {
+  font-family: "Orbitron", monospace;
+  font-size: 0.82rem;
+}
+
+.duolingo-primary-btn {
+  border: none;
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-family: "Orbitron", monospace;
+  font-size: 0.54rem;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.duolingo-primary-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.duolingo-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.duolingo-metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.duolingo-metric-card span {
+  font-size: 0.5rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.duolingo-metric-card strong {
+  font-family: "Orbitron", monospace;
+  font-size: 0.9rem;
+}
+
+.challenge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.challenge-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.challenge-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.64rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.challenge-icon {
+  font-size: 1rem;
+}
+
+.challenge-head strong {
+  font-size: 0.52rem;
+  letter-spacing: 0.8px;
+  opacity: 0.75;
+}
+
+.challenge-progress-track {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.challenge-progress-bar {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.lesson-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lesson-header {
+  font-size: 0.52rem;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+}
+
+.lesson-header strong {
+  font-family: "Orbitron", monospace;
+  font-size: 0.56rem;
+}
+
+.lesson-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.lesson-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  text-align: left;
+  padding: 10px 10px 12px;
+  border: 1px solid;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.lesson-card:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.04);
+}
+
+.lesson-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 8px;
+  border-radius: 999px;
+  font-size: 0.46rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.lesson-card h3 {
+  font-family: "Orbitron", monospace;
+  font-size: 0.68rem;
+  line-height: 1.3;
+}
+
+.lesson-card p {
+  font-size: 0.52rem;
+  line-height: 1.5;
+  opacity: 0.72;
+}
+
+.community-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.community-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.52rem;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+}
+
+.community-header strong {
+  font-family: "Orbitron", monospace;
+  font-size: 0.56rem;
+}
+
+.community-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.community-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 64px;
+  padding: 10px 8px;
+  border: 1px solid;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.015);
+}
+
+.community-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-family: "Orbitron", monospace;
+  font-size: 0.56rem;
+  font-weight: 700;
+}
+
+.community-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.community-copy h4 {
+  font-family: "Orbitron", monospace;
+  font-size: 0.56rem;
+}
+
+.community-copy p {
+  font-size: 0.5rem;
+  opacity: 0.72;
+}
+
+.account-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.account-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  font-family: "Orbitron", monospace;
+  font-size: 0.8rem;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  appearance: none;
+  transition: all 0.2s ease;
+}
+
+.account-user:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.account-user-icon {
+  font-size: 1rem;
+}
+
+.leaderboard-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.leaderboard-header,
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1.4fr) 52px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.leaderboard-header {
+  font-size: 0.46rem;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  opacity: 0.7;
+  padding: 0 4px;
+}
+
+.leaderboard-row {
+  width: 100%;
+  padding: 8px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  appearance: none;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.leaderboard-row:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+.leaderboard-row.active-user {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+}
+
+.leaderboard-rank,
+.leaderboard-count {
+  font-family: "Orbitron", monospace;
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+
+.leaderboard-user {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-family: "Orbitron", monospace;
+  font-size: 0.62rem;
+  overflow: hidden;
+}
+
+.leaderboard-user span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaderboard-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  flex-shrink: 0;
+}
+
+.leaderboard-week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.leaderboard-slot {
+  display: block;
+  width: 100%;
+  height: 10px;
+  border-radius: 3px;
+  border: 1px solid;
+}
+
+.profile-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-hero {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  font-size: 1.8rem;
+  box-shadow: inset 0 0 12px rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.profile-avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profile-name {
+  font-family: "Orbitron", monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.profile-level {
+  font-size: 0.5rem;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.profile-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.profile-metric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.profile-metric span {
+  font-size: 0.45rem;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.profile-metric strong {
+  font-family: "Orbitron", monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1px solid;
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.mini-social-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.mini-social-item,
+.profile-empty-state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.8);
+  padding: 7px 10px;
+  font-size: 0.54rem;
+  letter-spacing: 0.8px;
+}
+
+.mini-social-item {
+  cursor: pointer;
+}
+
+.profile-empty-state {
+  width: 100%;
+  padding: 8px 12px;
+  justify-content: flex-start;
+}
+
+.profile-card-label {
+  font-size: 0.52rem;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.profile-bio {
+  font-size: 0.68rem;
+  line-height: 1.6;
+  opacity: 0.85;
+}
+
+.profile-location {
+  font-size: 0.58rem;
+  letter-spacing: 0.5px;
+  opacity: 0.78;
+}
+
+.edit-pencil-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-pencil-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.member-since-info {
+  font-size: 0.7rem;
+  letter-spacing: 0.8px;
+  opacity: 0.85;
+}
+
+.profile-week-grid {
+  margin-top: 2px;
+}
+
+.profile-progress-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-progress-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.58rem;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.profile-progress-row strong {
+  font-family: "Orbitron", monospace;
+  font-size: 0.72rem;
+}
+
+.profile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.account-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.account-summary-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.account-summary-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.account-summary-meta strong {
+  font-family: "Orbitron", monospace;
+  font-size: 0.8rem;
+}
+
+.account-summary-meta span {
+  font-size: 0.5rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.account-small-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.account-metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.account-metric-card span {
+  font-size: 0.48rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.account-metric-card strong {
+  font-family: "Orbitron", monospace;
+  font-size: 0.72rem;
+  word-break: break-word;
+}
+
+.profile-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(2, 6, 23, 0.7);
+  z-index: 80;
+  padding: 20px;
+}
+
+.profile-modal {
+  width: min(420px, 100%);
+  background: rgba(7, 11, 20, 0.98);
+  border: 1px solid;
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profile-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.8rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+.profile-modal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.profile-upload-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.profile-avatar-modal {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.upload-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: 0.54rem;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.profile-modal-label {
+  font-size: 0.54rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.current-badge-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+}
+
+.badge-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.badge-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 10px 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.badge-card.selected {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.08);
+}
+
+.badge-icon {
+  font-size: 1.6rem;
+}
+
+.badge-name {
+  font-size: 0.54rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.badge-equip-btn {
+  border: 1px solid;
+  background: transparent;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.52rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.profile-label {
+  font-size: 0.52rem;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.profile-input {
+  width: 100%;
+  border: 1px solid;
+  border-radius: 10px;
+  background: rgba(9, 15, 25, 0.72);
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.account-section-title {
+  margin-top: 4px;
+  font-size: 0.52rem;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.service-capacity {
+  font-size: 0.62rem;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.login-message {
+  font-size: 0.64rem;
+  letter-spacing: 0.8px;
+  color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+}
+
+.achievement-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.achievement-item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  padding: 8px 10px;
+  border: 1px solid;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  font-family: "Orbitron", monospace;
+  font-size: 0.56rem;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.achievement-item.locked {
+  opacity: 0.5;
+}
+
+.achievement-item.unlocked {
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.12);
+}
+
+.achievement-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.achievement-icon {
+  font-size: 1rem;
+}
+
+.achievement-progress-track {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.achievement-progress-bar {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  transition: width 0.25s ease;
 }
 
 .daily-streak-card {
