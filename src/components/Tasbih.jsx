@@ -254,16 +254,24 @@ export default function Tasbih() {
   });
   const [activityLog, setActivityLog] = useState(() => {
     const saved = localStorage.getItem("tasbih_activity_log");
+    const defaultLog = { "2026-08-31": 100 };
+
     try {
-      return saved ? JSON.parse(saved) : {};
+      const parsed = saved ? JSON.parse(saved) : {};
+      if (!parsed || typeof parsed !== "object") return defaultLog;
+      if (!Object.prototype.hasOwnProperty.call(parsed, "2026-08-31")) {
+        return { ...parsed, "2026-08-31": 100 };
+      }
+      return parsed;
     } catch {
-      return {};
+      return defaultLog;
     }
   });
 
   const [count, setCount] = useState(() => {
     const saved = localStorage.getItem("tasbih_count");
-    return saved !== null ? parseInt(saved, 10) : 0;
+    if (saved !== null) return parseInt(saved, 10) || 0;
+    return 100;
   });
   const [mode, setMode] = useState(() => {
     const saved = localStorage.getItem("tasbih_mode");
